@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoOwn | Fractional Asset Marketplace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav-shell">
+        <a class="brand" href="#top" aria-label="CoOwn home">
+          <span class="brand-mark">C</span>
+          <span>CoOwn</span>
+        </a>
+        <div class="nav-links" aria-label="Primary navigation">
+          <a href="#marketplace">Marketplace</a>
+          <a href="#algorithm">Pricing Algorithm</a>
+          <a href="#upload">List Asset</a>
+          <a href="#admin">Admin</a>
+        </div>
+        <div class="nav-actions">
+          <button class="ghost-btn" id="resetDemoBtn" type="button">Reset demo</button>
+          <button class="primary-btn" id="loginButton" type="button">Login</button>
+          <button class="ghost-btn hidden" id="logoutButton" type="button">Logout</button>
+        </div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Chosen name: CoOwn</p>
+          <h1>Buy and trade fractions of real-world assets like stocks.</h1>
+          <p class="hero-subtitle">
+            CoOwn turns collectibles, vehicles, art, property interests, watches, and other assets into smaller shares so more people can participate in ownership.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-btn" href="#marketplace">Browse assets</a>
+            <a class="secondary-btn" href="#upload">Upload an asset</a>
+          </div>
+          <div class="trust-row" aria-label="Marketplace statistics">
+            <span><strong id="statAssets">0</strong> assets</span>
+            <span><strong id="statVolume">$0</strong> demo volume</span>
+            <span><strong id="statTraders">0</strong> traders</span>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Featured asset summary">
+          <div class="ticker-strip" id="tickerStrip"></div>
+          <div class="spotlight" id="spotlightCard"></div>
+        </aside>
+      </section>
+
+      <section class="section-shell panel-grid" id="algorithm">
+        <div class="panel large-panel">
+          <p class="eyebrow">Demand-based appreciation</p>
+          <h2>Pricing engine that rewards real marketplace demand.</h2>
+          <p>
+            This prototype updates each asset's estimated share price from buyer demand, filled trades, profile views, watchlists, ownership utilization, and available supply. It is a demo algorithm, not financial advice or a production securities exchange.
+          </p>
+          <div class="formula-card">
+            <code>price = base × (1 + demand + utilization + momentum + scarcity)</code>
+          </div>
+        </div>
+        <div class="panel metric-panel">
+          <span class="metric-label">Demand signals</span>
+          <ul class="signal-list">
+            <li>Buy orders and completed trades</li>
+            <li>Views and watchlist saves</li>
+            <li>Share utilization and remaining supply</li>
+            <li>Recent price momentum</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section-shell" id="marketplace">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Marketplace</p>
+            <h2>Highlighted and tradeable assets</h2>
+          </div>
+          <div class="filters">
+            <input id="searchInput" type="search" placeholder="Search assets" aria-label="Search assets" />
+            <select id="categoryFilter" aria-label="Filter by category">
+              <option value="all">All categories</option>
+            </select>
+            <select id="sortFilter" aria-label="Sort assets">
+              <option value="featured">Featured first</option>
+              <option value="demand">Highest demand</option>
+              <option value="priceAsc">Lowest price</option>
+              <option value="priceDesc">Highest price</option>
+            </select>
+          </div>
+        </div>
+        <div class="asset-grid" id="assetGrid"></div>
+      </section>
+
+      <section class="section-shell trade-desk" id="tradeDesk" aria-live="polite">
+        <div class="panel chart-panel">
+          <div class="chart-heading">
+            <div>
+              <p class="eyebrow">Live desk</p>
+              <h2 id="deskTitle">Select an asset</h2>
+            </div>
+            <span class="status-pill" id="deskBadge">Market</span>
+          </div>
+          <canvas id="priceChart" height="250" aria-label="Asset price chart"></canvas>
+        </div>
+        <div class="panel order-panel">
+          <h3>Trade shares</h3>
+          <p id="orderAssetText">Choose an asset to buy or sell fractional shares.</p>
+          <label for="shareAmount">Shares</label>
+          <input id="shareAmount" min="1" type="number" value="1" />
+          <div class="quote-box">
+            <span>Estimated total</span>
+            <strong id="quoteTotal">$0</strong>
+          </div>
+          <div class="order-actions">
+            <button class="primary-btn" id="buyButton" type="button">Buy</button>
+            <button class="secondary-btn" id="sellButton" type="button">Sell</button>
+          </div>
+          <p class="small-note" id="holdingText">Login to track your holdings.</p>
+        </div>
+      </section>
+
+      <section class="section-shell upload-section" id="upload">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Creator tools</p>
+            <h2>Upload your own asset</h2>
+          </div>
+          <p class="muted">Add an image, valuation, and number of shares. New uploads start pending until approved by an admin.</p>
+        </div>
+        <form class="upload-form" id="assetForm">
+          <label>Asset name<input required id="assetName" placeholder="1967 Mustang Fastback" /></label>
+          <label>Category<input required id="assetCategory" placeholder="Car, Art, Watch, Real Estate" /></label>
+          <label>Valuation ($)<input required id="assetPrice" min="100" type="number" placeholder="50000" /></label>
+          <label>Total shares<input required id="assetShares" min="10" type="number" placeholder="1000" /></label>
+          <label>Image URL<input id="assetImageUrl" placeholder="https://..." /></label>
+          <label>Or upload image<input id="assetImageFile" accept="image/*" type="file" /></label>
+          <label class="wide">Description<textarea required id="assetDescription" rows="4" placeholder="Describe the asset, provenance, condition, and why people may want it."></textarea></label>
+          <button class="primary-btn wide" type="submit">Submit asset for approval</button>
+        </form>
+      </section>
+
+      <section class="section-shell" id="portfolio">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Portfolio</p>
+            <h2>Your holdings</h2>
+          </div>
+        </div>
+        <div class="portfolio-list" id="portfolioList"></div>
+      </section>
+
+      <section class="section-shell admin-section" id="admin">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Admin access</p>
+            <h2>Review, feature, and manage uploaded assets</h2>
+          </div>
+          <p class="muted">Demo admin: <strong>admin@coown.test</strong> / <strong>Admin123!</strong></p>
+        </div>
+        <div id="adminPanel" class="admin-panel"></div>
+      </section>
+    </main>
+
+    <dialog id="loginDialog" class="login-dialog">
+      <form method="dialog" class="login-card" id="loginForm">
+        <button class="close-btn" value="cancel" aria-label="Close login dialog">×</button>
+        <p class="eyebrow">Account access</p>
+        <h2>Login to CoOwn</h2>
+        <label>Email<input id="loginEmail" type="email" required placeholder="you@example.com" /></label>
+        <label>Password<input id="loginPassword" type="password" required placeholder="Password" /></label>
+        <button class="primary-btn" type="submit">Login / Create demo user</button>
+        <p class="small-note">Admin access: admin@coown.test / Admin123!</p>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
