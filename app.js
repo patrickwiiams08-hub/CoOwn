@@ -90,6 +90,7 @@ const elements = {
   deskTitle: document.querySelector("#deskTitle"),
   deskBadge: document.querySelector("#deskBadge"),
   priceChart: document.querySelector("#priceChart"),
+  chartStats: document.querySelector("#chartStats"),
   orderAssetText: document.querySelector("#orderAssetText"),
   shareAmount: document.querySelector("#shareAmount"),
   quoteTotal: document.querySelector("#quoteTotal"),
@@ -248,33 +249,96 @@ function drawChart(asset) {
   const canvas = elements.priceChart;
   const ctx = canvas.getContext("2d");
   const ratio = window.devicePixelRatio || 1;
-  const width = canvas.clientWidth * ratio;
-  const height = canvas.height * ratio;
+  const cssWidth = canvas.clientWidth || 720;
+  const cssHeight = 280;
+  const width = cssWidth * ratio;
+  const height = cssHeight * ratio;
   canvas.width = width;
   canvas.height = height;
   ctx.clearRect(0, 0, width, height);
+
   const prices = [...asset.history, getCurrentPrice(asset)];
-  const min = Math.min(...prices) * 0.98;
-  const max = Math.max(...prices) * 1.02;
-  ctx.strokeStyle = "rgba(255,255,255,.12)";
-  ctx.lineWidth = 1 * ratio;
-  for (let i = 1; i < 5; i++) {
-    const y = (height / 5) * i;
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+  const min = Math.min(...prices) * 0.985;
+  const max = Math.max(...prices) * 1.015;
+  const pad = { top: 22 * ratio, right: 22 * ratio, bottom: 34 * ratio, left: 58 * ratio };
+  const chartWidth = width - pad.left - pad.right;
+  const chartHeight = height - pad.top - pad.bottom;
+  const pointFor = (price, index) => ({
+    x: pad.left + (index / (prices.length - 1)) * chartWidth,
+    y: pad.top + (1 - (price - min) / (max - min)) * chartHeight,
+  });
+  const points = prices.map(pointFor);
+
+  ctx.fillStyle = "#f7f8fb";
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.strokeStyle = "rgba(15, 23, 42, 0.08)";
+  ctx.lineWidth = ratio;
+  ctx.font = `${11 * ratio}px Inter, sans-serif`;
+  ctx.fillStyle = "rgba(71, 85, 105, 0.72)";
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (chartHeight / 4) * i;
+    const value = max - ((max - min) / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(width - pad.right, y);
+    ctx.stroke();
+    ctx.fillText(formatCurrency(value), 10 * ratio, y + 4 * ratio);
   }
-  ctx.strokeStyle = "#5be7c4";
-  ctx.lineWidth = 4 * ratio;
+
+  const areaGradient = ctx.createLinearGradient(0, pad.top, 0, height - pad.bottom);
+  areaGradient.addColorStop(0, "rgba(0, 122, 255, 0.20)");
+  areaGradient.addColorStop(0.58, "rgba(0, 122, 255, 0.055)");
+  areaGradient.addColorStop(1, "rgba(0, 122, 255, 0)");
   ctx.beginPath();
-  prices.forEach((price, index) => {
-    const x = (index / (prices.length - 1)) * (width - 32 * ratio) + 16 * ratio;
-    const y = height - ((price - min) / (max - min)) * (height - 42 * ratio) - 22 * ratio;
-    if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  points.forEach((point, index) => {
+    if (index === 0) ctx.moveTo(point.x, point.y);
+    else {
+      const previous = points[index - 1];
+      const midX = (previous.x + point.x) / 2;
+      ctx.bezierCurveTo(midX, previous.y, midX, point.y, point.x, point.y);
+    }
+  });
+  ctx.lineTo(points.at(-1).x, height - pad.bottom);
+  ctx.lineTo(points[0].x, height - pad.bottom);
+  ctx.closePath();
+  ctx.fillStyle = areaGradient;
+  ctx.fill();
+
+  const lineGradient = ctx.createLinearGradient(pad.left, 0, width - pad.right, 0);
+  lineGradient.addColorStop(0, "#111827");
+  lineGradient.addColorStop(0.55, "#007aff");
+  lineGradient.addColorStop(1, "#34c759");
+  ctx.strokeStyle = lineGradient;
+  ctx.lineWidth = 3.5 * ratio;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  points.forEach((point, index) => {
+    if (index === 0) ctx.moveTo(point.x, point.y);
+    else {
+      const previous = points[index - 1];
+      const midX = (previous.x + point.x) / 2;
+      ctx.bezierCurveTo(midX, previous.y, midX, point.y, point.x, point.y);
+    }
   });
   ctx.stroke();
-  ctx.fillStyle = "#f7fbff";
-  ctx.font = `${13 * ratio}px Inter, sans-serif`;
-  ctx.fillText(`${formatCurrency(max)}`, 14 * ratio, 20 * ratio);
-  ctx.fillText(`${formatCurrency(min)}`, 14 * ratio, height - 12 * ratio);
+
+  const lastPoint = points.at(-1);
+  ctx.fillStyle = "#ffffff";
+  ctx.strokeStyle = "#007aff";
+  ctx.lineWidth = 3 * ratio;
+  ctx.beginPath();
+  ctx.arc(lastPoint.x, lastPoint.y, 5.5 * ratio, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(71, 85, 105, 0.72)";
+  ctx.fillText("30D", pad.left, height - 10 * ratio);
+  ctx.fillText("Today", width - pad.right - 34 * ratio, height - 10 * ratio);
+
+  const change = getChange(asset);
+  elements.chartStats.innerHTML = `<span>Open ${formatCurrency(prices[0])}</span><span>High ${formatCurrency(Math.max(...prices))}</span><span>Low ${formatCurrency(Math.min(...prices))}</span><strong class="${change >= 0 ? "change-positive" : "change-negative"}">${change >= 0 ? "+" : ""}${change.toFixed(2)}%</strong>`;
 }
 
 function getHolding(assetId) {

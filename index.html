@@ -33,10 +33,10 @@
     <main id="top">
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Chosen name: CoOwn</p>
-          <h1>Buy and trade fractions of real-world assets like stocks.</h1>
+          <p class="eyebrow">CoOwn marketplace</p>
+          <h1>Own a slice of standout assets.</h1>
           <p class="hero-subtitle">
-            CoOwn turns collectibles, vehicles, art, property interests, watches, and other assets into smaller shares so more people can participate in ownership.
+            A cleaner way to discover, list, and trade fractional shares of collectibles, vehicles, art, property interests, watches, and more.
           </p>
           <div class="hero-actions">
             <a class="primary-btn" href="#marketplace">Browse assets</a>
@@ -54,26 +54,14 @@
         </aside>
       </section>
 
-      <section class="section-shell panel-grid" id="algorithm">
-        <div class="panel large-panel">
-          <p class="eyebrow">Demand-based appreciation</p>
-          <h2>Pricing engine that rewards real marketplace demand.</h2>
-          <p>
-            This prototype updates each asset's estimated share price from buyer demand, filled trades, profile views, watchlists, ownership utilization, and available supply. It is a demo algorithm, not financial advice or a production securities exchange.
-          </p>
-          <div class="formula-card">
-            <code>price = base × (1 + demand + utilization + momentum + scarcity)</code>
-          </div>
+      <section class="section-shell quiet-note" id="algorithm">
+        <div>
+          <p class="eyebrow">Market signals</p>
+          <h2>Prices respond quietly in the background.</h2>
         </div>
-        <div class="panel metric-panel">
-          <span class="metric-label">Demand signals</span>
-          <ul class="signal-list">
-            <li>Buy orders and completed trades</li>
-            <li>Views and watchlist saves</li>
-            <li>Share utilization and remaining supply</li>
-            <li>Recent price momentum</li>
-          </ul>
-        </div>
+        <p>
+          CoOwn uses a simple demo pricing model that reacts to views, watchlists, trades, ownership utilization, scarcity, and recent momentum. The experience stays focused on the assets—not the formula.
+        </p>
       </section>
 
       <section class="section-shell" id="marketplace">
@@ -107,7 +95,7 @@
             </div>
             <span class="status-pill" id="deskBadge">Market</span>
           </div>
-          <canvas id="priceChart" height="250" aria-label="Asset price chart"></canvas>
+          <div class="chart-frame"><canvas id="priceChart" height="280" aria-label="Asset price chart"></canvas><div class="chart-stats" id="chartStats"></div></div>
         </div>
         <div class="panel order-panel">
           <h3>Trade shares</h3>
