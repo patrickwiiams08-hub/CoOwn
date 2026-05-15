@@ -1,0 +1,17 @@
+{
+  "name": "coown-marketplace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CoOwn fractional asset marketplace prototype",
+  "scripts": {
+    "start": "python3 -m http.server 5173",
+    "zip": "zip -r coown-marketplace.zip index.html styles.css app.js README.md package.json assets -x '*.DS_Store'"
+  },
+  "keywords": [
+    "fractional-assets",
+    "marketplace",
+    "prototype"
+  ],
+  "author": "CoOwn",
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,5 @@
+# Generated archives are intentionally excluded because PRs do not support binary zip files.
+*.zip
+
+# OS/editor noise
+.DS_Store
